@@ -1,16 +1,13 @@
 /* ============================================================
-   TELOSAA MENU - Data + Logic
+   TELOSAA MENU - Final Integration with Telegram
    ============================================================ */
 
-// ⚠️ ضع رابط n8n Webhook هنا بعد إنشاء الـ workflow
-const N8N_WEBHOOK_URL = "https://YOUR-N8N-INSTANCE.app.n8n.cloud/webhook/telosaa-order";
+const BOT_TOKEN = "8998768907:AAGMBnd2R9SbAtZDt5HmyIAEdNNORLhBqL4";
+const CHAT_ID = "861741866";
 
-/* ---------- بيانات المنيو ---------- */
 const MENU = [
   {
-    id: "pizza-italian",
-    title: "البيتزا الإيطالي",
-    emoji: "🍕",
+    id: "pizza-italian", title: "البيتزا الإيطالي", emoji: "🍕",
     items: [
       { name: "تشيكن BBQ", desc: "صوص باربيكيو - فراخ متبلة - مشروم - موزاريلا", price: 180, featured: true },
       { name: "بانيه كرسبي", desc: "بانيه - خضار - موزاريلا", price: 170 },
@@ -33,9 +30,7 @@ const MENU = [
     ]
   },
   {
-    id: "pizza-sharky",
-    title: "البيتزا الشرقي",
-    emoji: "🥘",
+    id: "pizza-sharky", title: "البيتزا الشرقي", emoji: "🥘",
     items: [
       { name: "فراخ", desc: "قطع فراخ، خضار، بيض، رومي", price: 180 },
       { name: "بانيه كريسبي", desc: "بانيه، خضار، رومي، بيض، موتزاريللا", price: 180 },
@@ -58,9 +53,7 @@ const MENU = [
     ]
   },
   {
-    id: "feteer-savory",
-    title: "الفطير الحادق",
-    emoji: "🥧",
+    id: "feteer-savory", title: "الفطير الحادق", emoji: "🥧",
     items: [
       { name: "فراخ", desc: "قطع فراخ، جبنة رومي، خضار، موزاريلا", price: 160 },
       { name: "بانيه كرسبي", desc: "بانيه حار، جبنة رومي، خضار، موزاريلا", price: 160 },
@@ -86,9 +79,7 @@ const MENU = [
     ]
   },
   {
-    id: "feteer-sweet",
-    title: "الفطير الحلو",
-    emoji: "🍯",
+    id: "feteer-sweet", title: "الفطير الحلو", emoji: "🍯",
     items: [
       { name: "سكر", desc: "سمنة، سكر، لبن", price: 90 },
       { name: "كاسترد", desc: "كاستر، سكر، لبن", price: 100 },
@@ -108,9 +99,7 @@ const MENU = [
     ]
   },
   {
-    id: "pasta",
-    title: "المكرونات",
-    emoji: "🍝",
+    id: "pasta", title: "المكرونات", emoji: "🍝",
     items: [
       { name: "نجرسكو فراخ", desc: "فراخ، خضار، صوص كريمة، موتزاريللا", price: 150 },
       { name: "نجرسكو فراخ بالشيدر", desc: "فراخ، شيدر، خضار، صوص كريمة، موتزاريللا", price: 160 },
@@ -134,9 +123,7 @@ const MENU = [
     ]
   },
   {
-    id: "sandwich",
-    title: "صاروخ ساندوتش (كريب رول)",
-    emoji: "🚀",
+    id: "sandwich", title: "صاروخ ساندوتش", emoji: "🚀",
     items: [
       { name: "صاروخ بانيه كريسبي", desc: "كريب رول بانيه كريسبي", price: 90 },
       { name: "صاروخ شيش", desc: "كريب رول شيش", price: 90 },
@@ -152,7 +139,7 @@ const MENU = [
       { name: "صاروخ سلامي", desc: "سلامي", price: 85 },
       { name: "صاروخ سبايسي", desc: "سبايسي", price: 90, spicy: true },
       { name: "صاروخ ميكس لحوم", desc: "ميكس لحوم", price: 100 },
-      { name: "صاروخ سوبر سوبيرم", desc: "سوبر سوبريم", price: 105 },
+      { name: "صاروخ سوبر سوبيرم", desc: "سوبر سوبرم", price: 105 },
       { name: "صاروخ برجر", desc: "برجر", price: 90 },
       { name: "صاروخ بالسجق البلدي", desc: "سجق بلدي", price: 85 },
       { name: "صاروخ بالبسطرمة", desc: "بسطرمة", price: 85 },
@@ -162,9 +149,7 @@ const MENU = [
     ]
   },
   {
-    id: "crepe-savory",
-    title: "الكريب الحادق",
-    emoji: "🌯",
+    id: "crepe-savory", title: "الكريب الحادق", emoji: "🌯",
     items: [
       { name: "كريب كوردن بلو", desc: "كوردن بلو، صوص رانش، مايونيز، كاتشب، كابوتشا، فلفل ألوان، موتزاريللا", price: 110 },
       { name: "كريب بانيه على سوسيس", desc: "بانيه، سوسيس، مايونيز، كاتشب، كابوتشا، فلفل ألوان، موتزاريللا", price: 110 },
@@ -195,9 +180,7 @@ const MENU = [
     ]
   },
   {
-    id: "crepe-sweet",
-    title: "الكريب الحلو",
-    emoji: "🍫",
+    id: "crepe-sweet", title: "الكريب الحلو", emoji: "🍫",
     items: [
       { name: "كريب شيكولاتة عادي", desc: "شيكولاتة", price: 70, featured: true },
       { name: "كريب شيكولاتة مكسرات", desc: "شيكولاتة ومكسرات", price: 85 },
@@ -212,9 +195,7 @@ const MENU = [
     ]
   },
   {
-    id: "calzone",
-    title: "الكاليزوني",
-    emoji: "🥟",
+    id: "calzone", title: "الكاليزوني", emoji: "🥟",
     items: [
       { name: "كاليزوني فراخ", desc: "فراخ", price: 130 },
       { name: "كاليزوني كرسبي", desc: "كرسبي", price: 130 },
@@ -232,18 +213,14 @@ const MENU = [
     ]
   },
   {
-    id: "meshaltet",
-    title: "فطير مشلتت",
-    emoji: "🥯",
+    id: "meshaltet", title: "فطير مشلتت", emoji: "🥯",
     items: [
       { name: "مشلتت سادة", desc: "فطير مشلتت سادة بالسمن البلدي", price: 60 },
       { name: "مشلتت ست الحسن", desc: "بولة قشطة وعسل", price: 90 }
     ]
   },
   {
-    id: "fries",
-    title: "فارم فريتس (أطباق جانبية)",
-    emoji: "🍟",
+    id: "fries", title: "فارم فريتس", emoji: "🍟",
     items: [
       { name: "فارم فريتس سموك تركي", desc: "سموك تركي - استربس - صوص شيدر", price: 100 },
       { name: "فارم فريز استربس", desc: "استربس - صوص شيدر", price: 95 },
@@ -256,17 +233,11 @@ const MENU = [
     ]
   },
   {
-    id: "dessert",
-    title: "الحلو والشرقي",
-    emoji: "🍰",
-    items: [
-      { name: "ام علي", desc: "أم علي بالحليب والمكسرات", price: 70 }
-    ]
+    id: "dessert", title: "الحلو والشرقي", emoji: "🍰",
+    items: [ { name: "ام علي", desc: "أم علي بالحليب والمكسرات", price: 70 } ]
   },
   {
-    id: "appetizers",
-    title: "المقبلات",
-    emoji: "🥗",
+    id: "appetizers", title: "المقبلات", emoji: "🥗",
     items: [
       { name: "سلطة تومية", desc: "سلطة تومية", price: 25 },
       { name: "سلطة بطاطس", desc: "سلطة بطاطس", price: 25 },
@@ -279,9 +250,7 @@ const MENU = [
     ]
   },
   {
-    id: "sauces",
-    title: "الصوصات",
-    emoji: "🧴",
+    id: "sauces", title: "الصوصات", emoji: "🧴",
     items: [
       { name: "صوص باربكيو", desc: "صوص باربكيو", price: 15 },
       { name: "صوص تايجر", desc: "صوص تايجر", price: 15 },
@@ -294,9 +263,7 @@ const MENU = [
     ]
   },
   {
-    id: "drinks",
-    title: "المشروبات",
-    emoji: "🥤",
+    id: "drinks", title: "المشروبات", emoji: "🥤",
     items: [
       { name: "مياه معدنية صغير", desc: "مياه معدنية", price: 10 },
       { name: "بيبسي - سفن", desc: "بيبسي أو سفن", price: 20 },
@@ -304,9 +271,7 @@ const MENU = [
     ]
   },
   {
-    id: "extras",
-    title: "إضافات القائمة",
-    emoji: "➕",
+    id: "extras", title: "إضافات القائمة", emoji: "➕",
     items: [
       { name: "جبنة موزاريلا", desc: "إضافة جبنة موزاريلا", price: 20 },
       { name: "لحوم", desc: "إضافة لحوم", price: 40 },
@@ -329,86 +294,56 @@ const MENU = [
   }
 ];
 
-/* ---------- State ---------- */
-let cart = []; // [{sectionId, itemIndex, name, price, qty}]
-let itemQty = {}; // key: `${sectionId}-${itemIndex}` -> qty
+let cart = []; 
+let itemQty = {}; 
 
-/* ---------- Helpers ---------- */
 const $ = (sel) => document.querySelector(sel);
 const formatPrice = (p) => `${p} ج.م`;
 
+function parseKey(key) {
+  const lastDashIndex = key.lastIndexOf('-');
+  return { sectionId: key.substring(0, lastDashIndex), index: parseInt(key.substring(lastDashIndex + 1)) };
+}
 function itemKey(sectionId, index) { return `${sectionId}-${index}`; }
+function getCartTotalQty() { return cart.reduce((s, i) => s + i.qty, 0); }
+function getCartTotalPrice() { return cart.reduce((s, i) => s + i.qty * i.price, 0); }
 
-function getCartTotalQty() {
-  return cart.reduce((s, i) => s + i.qty, 0);
-}
-function getCartTotalPrice() {
-  return cart.reduce((s, i) => s + i.qty * i.price, 0);
-}
-
-/* ---------- Render Menu ---------- */
 function renderMenu() {
   const container = $("#menuSections");
-  const sectionsHTML = MENU.map((section, sIdx) => `
+  container.innerHTML = MENU.map((section) => `
     <section class="section" id="${section.id}">
-      <h2 class="section-title">
-        <span class="emoji">${section.emoji}</span>
-        ${section.title}
-      </h2>
-      <p class="section-hint">✨ اضغط على السعر أو زر الإضافة للاختيار والإضافة إلى السلة ✨</p>
+      <h2 class="section-title"><span class="emoji">${section.emoji}</span> ${section.title}</h2>
       <div class="grid">
-        ${section.items.map((item, iIdx) => cardHTML(section, item, sIdx, iIdx)).join("")}
+        ${section.items.map((item, iIdx) => cardHTML(section, item, iIdx)).join("")}
       </div>
     </section>
   `).join("");
-  container.innerHTML = sectionsHTML;
-
-  // animate cards stagger
-  document.querySelectorAll(".card").forEach((card, i) => {
-    card.style.animationDelay = `${Math.min(i * 0.02, 0.4)}s`;
-  });
 }
 
-function cardHTML(section, item, sIdx, iIdx) {
+function cardHTML(section, item, iIdx) {
   const key = itemKey(section.id, iIdx);
   const qty = itemQty[key] || 0;
   const selected = qty > 0 ? "selected" : "";
-
-  const badge = item.featured
-    ? `<span class="badge featured">مميز</span>`
-    : item.spicy
-    ? `<span class="badge spicy">🌶️ حار</span>`
-    : "";
-
+  const badge = item.featured ? `<span class="badge featured">مميز</span>` : item.spicy ? `<span class="badge spicy">🌶️ حار</span>` : "";
+  
   const footer = qty > 0
-    ? `<div class="qty-control">
-         <button data-action="dec" data-key="${key}">−</button>
-         <span>${qty}</span>
-         <button data-action="inc" data-key="${key}">+</button>
-       </div>`
+    ? `<div class="qty-control"><button data-action="dec" data-key="${key}">−</button><span>${qty}</span><button data-action="inc" data-key="${key}">+</button></div>`
     : `<button class="add-btn" data-action="add" data-key="${key}">إضافة +</button>`;
 
   return `
     <div class="card ${selected}" data-key="${key}" data-section="${section.id}" data-index="${iIdx}">
-      <div class="card-top">
-        <div class="card-name">${item.name}</div>
-        ${badge}
-      </div>
+      <div class="card-top"><div class="card-name">${item.name}</div>${badge}</div>
       <div class="card-desc">${item.desc || ""}</div>
-      <div class="card-footer">
-        <span class="price">${formatPrice(item.price)}</span>
-        ${footer}
-      </div>
+      <div class="card-footer"><span class="price">${formatPrice(item.price)}</span>${footer}</div>
     </div>
   `;
 }
 
-/* ---------- Render Category Chips ---------- */
 function renderCategories() {
   const bar = $("#categoriesBar");
   bar.innerHTML = MENU.map((s, i) => `
     <button class="cat-chip ${i === 0 ? "active" : ""}" data-target="${s.id}">
-      <span>${s.emoji}</span> ${s.title.split("(")[0].trim()}
+      <span>${s.emoji}</span> ${s.title}
     </button>
   `).join("");
 
@@ -417,15 +352,12 @@ function renderCategories() {
     if (!chip) return;
     document.querySelectorAll(".cat-chip").forEach(c => c.classList.remove("active"));
     chip.classList.add("active");
-    const target = document.getElementById(chip.dataset.target);
-    target?.scrollIntoView({ behavior: "smooth", block: "start" });
+    document.getElementById(chip.dataset.target)?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 }
 
-/* ---------- Cart Logic ---------- */
 function findItem(sectionId, index) {
-  const section = MENU.find(s => s.id === sectionId);
-  return section?.items[index];
+  return MENU.find(s => s.id === sectionId)?.items[index];
 }
 
 function addItem(sectionId, index) {
@@ -434,13 +366,10 @@ function addItem(sectionId, index) {
   if (!item) return;
 
   const existing = cart.find(c => c.key === key);
-  if (existing) {
-    existing.qty += 1;
-  } else {
-    cart.push({ key, sectionId, index, name: item.name, price: item.price, qty: 1 });
-  }
+  if (existing) existing.qty += 1;
+  else cart.push({ key, sectionId, index, name: item.name, price: item.price, qty: 1 });
+  
   itemQty[key] = (itemQty[key] || 0) + 1;
-
   updateCardUI(key);
   updateCartUI();
   showToast(`تمت إضافة: ${item.name}`);
@@ -459,7 +388,6 @@ function decItem(sectionId, index) {
       delete itemQty[key];
     }
   }
-
   updateCardUI(key);
   updateCartUI();
 }
@@ -467,8 +395,7 @@ function decItem(sectionId, index) {
 function updateCardUI(key) {
   const card = document.querySelector(`.card[data-key="${key}"]`);
   if (!card) return;
-  const sectionId = card.dataset.section;
-  const index = parseInt(card.dataset.index);
+  const { sectionId, index } = parseKey(key);
   const qty = itemQty[key] || 0;
   const item = findItem(sectionId, index);
 
@@ -479,16 +406,12 @@ function updateCardUI(key) {
     footer.innerHTML = `
       <span class="price">${formatPrice(item.price)}</span>
       <div class="qty-control">
-        <button data-action="dec" data-key="${key}">−</button>
-        <span>${qty}</span>
-        <button data-action="inc" data-key="${key}">+</button>
-      </div>
-    `;
+        <button data-action="dec" data-key="${key}">−</button><span>${qty}</span><button data-action="inc" data-key="${key}">+</button>
+      </div>`;
   } else {
     footer.innerHTML = `
       <span class="price">${formatPrice(item.price)}</span>
-      <button class="add-btn" data-action="add" data-key="${key}">إضافة +</button>
-    `;
+      <button class="add-btn" data-action="add" data-key="${key}">إضافة +</button>`;
   }
 }
 
@@ -496,11 +419,8 @@ function updateCartUI() {
   const count = getCartTotalQty();
   $("#cartCount").textContent = count;
   $("#fabCount").textContent = count;
+  $("#cartFab").hidden = count === 0;
 
-  const fab = $("#cartFab");
-  fab.hidden = count === 0;
-
-  // render items in drawer
   const container = $("#cartItems");
   if (cart.length === 0) {
     container.innerHTML = `<p class="empty-msg">السلة فاضية، ابدأ الاختيار 👌</p>`;
@@ -512,161 +432,137 @@ function updateCartUI() {
           <div class="cart-item-price">${c.qty} × ${formatPrice(c.price)} = ${formatPrice(c.qty * c.price)}</div>
         </div>
         <div class="qty-control">
-          <button data-action="dec" data-key="${c.key}">−</button>
-          <span>${c.qty}</span>
-          <button data-action="inc" data-key="${c.key}">+</button>
+          <button data-action="dec" data-key="${c.key}">−</button><span>${c.qty}</span><button data-action="inc" data-key="${c.key}">+</button>
         </div>
       </div>
     `).join("");
   }
-
   $("#cartTotal").textContent = formatPrice(getCartTotalPrice());
+  $("#modalTotal").textContent = formatPrice(getCartTotalPrice());
 }
 
 function bumpCartBadge() {
   const el = $("#cartCount");
-  el.classList.remove("bump");
-  void el.offsetWidth;
-  el.classList.add("bump");
+  el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump");
 }
 
-/* ---------- Event Delegation ---------- */
 document.addEventListener("click", (e) => {
   const btn = e.target.closest("[data-action]");
   if (btn) {
     const action = btn.dataset.action;
-    const key = btn.dataset.key;
-    const [sectionId, idxStr] = key.split("-");
-    const index = parseInt(idxStr);
-
+    const { sectionId, index } = parseKey(btn.dataset.key);
     if (action === "add" || action === "inc") addItem(sectionId, index);
     if (action === "dec") decItem(sectionId, index);
-
     e.stopPropagation();
     return;
   }
-
-  // click on card itself => add
   const card = e.target.closest(".card");
   if (card) {
-    const key = card.dataset.key;
-    const [sectionId, idxStr] = key.split("-");
-    addItem(sectionId, parseInt(idxStr));
+    const { sectionId, index } = parseKey(card.dataset.key);
+    addItem(sectionId, index);
   }
 });
 
-/* ---------- Cart Drawer ---------- */
-function openDrawer() {
-  $("#cartDrawer").classList.add("open");
-  $("#drawerOverlay").hidden = false;
-}
-function closeDrawer() {
-  $("#cartDrawer").classList.remove("open");
-  $("#drawerOverlay").hidden = true;
-}
+function openDrawer() { $("#cartDrawer").classList.add("open"); $("#drawerOverlay").hidden = false; }
+function closeDrawer() { $("#cartDrawer").classList.remove("open"); $("#drawerOverlay").hidden = true; }
 $("#cartBtn").addEventListener("click", openDrawer);
 $("#cartFab").addEventListener("click", openDrawer);
 $("#closeDrawer").addEventListener("click", closeDrawer);
 $("#drawerOverlay").addEventListener("click", closeDrawer);
 
-/* ---------- Checkout → n8n Webhook ---------- */
-$("#checkoutBtn").addEventListener("click", async () => {
-  if (cart.length === 0) {
-    showToast("السلة فاضية!");
+$("#openCheckoutBtn").addEventListener("click", () => {
+  if (cart.length === 0) { showToast("السلة فاضية!"); return; }
+  closeDrawer();
+  $("#checkoutModal").classList.add("open");
+});
+
+$("#closeModalBtn").addEventListener("click", () => {
+  $("#checkoutModal").classList.remove("open");
+});
+
+$("#sendTelegramBtn").addEventListener("click", async () => {
+  const name = $("#custName").value.trim();
+  const phone = $("#custPhone").value.trim();
+  const address = $("#custAddress").value.trim();
+  const statusMsg = $("#webhookStatus");
+  const btn = $("#sendTelegramBtn");
+
+  if (!name || !phone || !address) {
+    showToast("برجاء إكمال جميع البيانات أولاً ⚠️");
     return;
   }
 
-  const btn = $("#checkoutBtn");
-  const status = $("#webhookStatus");
   btn.disabled = true;
-  btn.textContent = "جاري الإرسال...";
-  status.textContent = "";
-  status.className = "webhook-status";
+  statusMsg.textContent = "جاري إرسال الطلب إلى البوت...";
+  statusMsg.className = "webhook-status";
 
-  const orderPayload = {
-    restaurant: "Telosaa",
-    orderId: "TLS-" + Date.now(),
-    createdAt: new Date().toISOString(),
-    items: cart.map(c => ({
-      name: c.name,
-      qty: c.qty,
-      unitPrice: c.price,
-      subtotal: c.qty * c.price
-    })),
-    totalQty: getCartTotalQty(),
-    totalPrice: getCartTotalPrice(),
-    customer: {
-      name: "عميل تجريبي",
-      phone: "01000000000",
-      note: ""
-    }
-  };
+  let msg = `🍕 *طلب جديد من Telosaa* 🍕\n`;
+  msg += `------------------------------\n`;
+  msg += `👤 *الاسم:* ${name}\n`;
+  msg += `📱 *الموبايل:* ${phone}\n`;
+  msg += `📍 *العنوان:* ${address}\n`;
+  msg += `------------------------------\n`;
+  msg += `*🛒 الأصناف:*\n\n`;
+
+  cart.forEach((item, index) => {
+    msg += `${index + 1}. *${item.name}*\n`;
+    msg += `   الكمية: ${item.qty} | المجموع: ${item.qty * item.price} ج\n`;
+  });
+
+  msg += `------------------------------\n`;
+  msg += `*💵 الإجمالي المطلوب: ${getCartTotalPrice()} ج*\n`;
+  msg += `------------------------------\n`;
+
+  const telegramUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
 
   try {
-    // لو الرابط لسه مش متظبط، اعرض رسالة واضحة
-    if (N8N_WEBHOOK_URL.includes("YOUR-N8N")) {
-      throw new Error("لسه محطتش رابط n8n في الكود (N8N_WEBHOOK_URL)");
+    const formData = new URLSearchParams();
+    formData.append("chat_id", CHAT_ID);
+    formData.append("text", msg);
+    formData.append("parse_mode", "Markdown");
+
+    const res = await fetch(telegramUrl, {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.ok) {
+      throw new Error(data.description || "حدث خطأ أثناء الإرسال");
     }
 
-    const res = await fetch(N8N_WEBHOOK_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(orderPayload)
-    });
+    statusMsg.textContent = "✅ تم إرسال طلبك إلى البوت بنجاح!";
+    statusMsg.classList.add("success");
 
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-    status.textContent = "✅ تم إرسال الطلب بنجاح!";
-    status.classList.add("success");
-
-    // reset
-    cart = [];
+    cart = []; 
     itemQty = {};
-    document.querySelectorAll(".card").forEach(card => {
-      const key = card.dataset.key;
-      const [sectionId, idx] = key.split("-");
-      updateCardUI(key);
-    });
+    document.querySelectorAll(".card").forEach(card => updateCardUI(card.dataset.key));
     updateCartUI();
-    setTimeout(closeDrawer, 1500);
+    $("#custName").value = "";
+    $("#custPhone").value = "";
+    $("#custAddress").value = "";
+
+    setTimeout(() => {
+      $("#checkoutModal").classList.remove("open");
+      statusMsg.textContent = "";
+    }, 3000);
 
   } catch (err) {
-    status.textContent = "❌ خطأ: " + err.message;
-    status.classList.add("error");
+    statusMsg.textContent = "❌ " + err.message;
+    statusMsg.classList.add("error");
   } finally {
     btn.disabled = false;
-    btn.textContent = "إرسال الطلب ✅";
   }
 });
 
-/* ---------- Toast ---------- */
-let toastTimer;
 function showToast(msg) {
   const t = $("#toast");
   t.textContent = msg;
   t.classList.add("show");
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove("show"), 1800);
+  setTimeout(() => t.classList.remove("show"), 2000);
 }
 
-/* ---------- Scroll spy for categories ---------- */
-function setupScrollSpy() {
-  const sections = MENU.map(s => document.getElementById(s.id));
-  const chips = document.querySelectorAll(".cat-chip");
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        chips.forEach(c => c.classList.toggle("active", c.dataset.target === entry.target.id));
-      }
-    });
-  }, { rootMargin: "-140px 0px -60% 0px", threshold: 0 });
-
-  sections.forEach(s => s && observer.observe(s));
-}
-
-/* ---------- Init ---------- */
 renderCategories();
 renderMenu();
 updateCartUI();
-setupScrollSpy();
