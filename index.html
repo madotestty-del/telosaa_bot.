@@ -11,7 +11,6 @@
 </head>
 <body>
 
-  <!-- Header -->
   <header class="header">
     <div class="header-inner">
       <div class="brand">
@@ -21,53 +20,81 @@
           <p>Delicious Taste, Every Bite</p>
         </div>
       </div>
-
       <button class="cart-btn" id="cartBtn" aria-label="السلة">
         <span class="cart-icon">🛒</span>
         <span class="cart-count" id="cartCount">0</span>
       </button>
     </div>
-
-    <!-- Categories bar -->
     <nav class="categories" id="categoriesBar"></nav>
   </header>
 
-  <!-- Main menu -->
   <main class="menu-container">
     <div id="menuSections"></div>
   </main>
 
-  <!-- Floating cart summary -->
   <div class="cart-fab" id="cartFab" hidden>
     <span>🛒 <strong id="fabCount">0</strong> صنف</span>
     <span>عرض السلة</span>
   </div>
 
-  <!-- Cart Drawer -->
   <div class="drawer-overlay" id="drawerOverlay" hidden></div>
   <aside class="cart-drawer" id="cartDrawer">
     <div class="drawer-header">
       <h2>🛒 سلة الطلبات</h2>
       <button class="close-btn" id="closeDrawer">✕</button>
     </div>
-
     <div class="drawer-body" id="cartItems">
       <p class="empty-msg">السلة فاضية، ابدأ الاختيار 👌</p>
     </div>
-
     <div class="drawer-footer">
       <div class="total-row">
         <span>الإجمالي</span>
         <strong id="cartTotal">0 ج.م</strong>
       </div>
-      <button class="checkout-btn" id="checkoutBtn">إرسال الطلب ✅</button>
-      <p class="webhook-status" id="webhookStatus"></p>
+      <button class="checkout-btn" id="openCheckoutBtn">مراجعة الطلب 📝</button>
     </div>
   </aside>
 
-  <!-- Toast -->
-  <div class="toast" id="toast"></div>
+  <div class="modal-overlay" id="checkoutModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>📝 مراجعة وتأكيد الطلب</h2>
+        <button class="close-btn" id="closeModalBtn">✕</button>
+      </div>
+      
+      <div class="modal-body">
+        <p class="hint">أكمل بياناتك وسيتم إرسال الفاتورة إلى تليجرام</p>
+        
+        <div class="input-group">
+          <label>الاسم</label>
+          <input type="text" id="custName" placeholder="اكتب اسمك" required>
+        </div>
+        
+        <div class="input-group">
+          <label>رقم الموبايل</label>
+          <input type="tel" id="custPhone" placeholder="01xxxxxxxxx" required>
+        </div>
+        
+        <div class="input-group">
+          <label>العنوان</label>
+          <input type="text" id="custAddress" placeholder="المنطقة، الشارع، رقم العمارة" required>
+        </div>
+      </div>
 
+      <div class="modal-footer">
+        <div class="total-row">
+          <span>الحساب الكلي</span>
+          <strong id="modalTotal">0 ج.م</strong>
+        </div>
+        <button class="telegram-btn" id="sendTelegramBtn">
+          <span>✈️</span> تأكيد الطلب وإرساله
+        </button>
+        <p class="webhook-status" id="webhookStatus"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
   <script src="script.js"></script>
 </body>
 </html>
