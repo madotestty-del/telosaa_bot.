@@ -479,6 +479,12 @@ $("#openCheckoutBtn").addEventListener("click", () => {
 
 $("#closeModalBtn").addEventListener("click", () => {
   $("#checkoutModal").classList.remove("open");
+  // إعادة زر الإرسال لحالته الأصلية
+  const btn = $("#sendTelegramBtn");
+  btn.style.display = "flex";
+  const statusMsg = $("#webhookStatus");
+  statusMsg.innerHTML = "";
+  statusMsg.className = "webhook-status";
 });
 
 $("#sendTelegramBtn").addEventListener("click", () => {
@@ -524,28 +530,67 @@ $("#sendTelegramBtn").addEventListener("click", () => {
   msg += `------------------------------\n`;
   msg += `✅ أنا أؤكد هذا الطلب`;
 
-  // إذا عندنا chat_id نبعت مباشرة للشات الصح
-  if (CHAT_ID) {
-    const encodedMsg = encodeURIComponent(msg);
-    const tgUrl = `tg://msg?to=@telosaa_bot&text=${encodedMsg}`;
-    const webUrl = `https://t.me/telosaa_bot?text=${encodedMsg}`;
+  // حفظ الرسالة للاستخدام في الأزرار
+  window._pendingOrderMsg = msg;
 
-    // محاولة فتح تطبيق تيليجرام مباشرة
-    window.location.href = tgUrl;
+  // إخفاء زر الإرسال وإظهار خطوتين
+  $("#sendTelegramBtn").style.display = "none";
+  statusMsg.innerHTML = `
+    <div style="margin-top:12px;">
+      <p style="color:#f1f1f1;font-size:13px;margin-bottom:12px;line-height:1.7;">
+        ✅ الطلب جاهز! اتبع الخطوتين:
+      </p>
+      <button id="copyOrderBtn" style="
+        width:100%;padding:12px;background:#f77f00;color:#fff;border:none;
+        border-radius:10px;font-family:inherit;font-size:15px;font-weight:700;
+        cursor:pointer;margin-bottom:10px;display:flex;align-items:center;
+        justify-content:center;gap:8px;">
+        📋 الخطوة 1: انسخ الطلب
+      </button>
+      <a href="https://t.me/telosaa_bot" target="_blank" style="
+        width:100%;padding:12px;background:#229ED9;color:#fff;border:none;
+        border-radius:10px;font-family:inherit;font-size:15px;font-weight:700;
+        cursor:pointer;display:flex;align-items:center;justify-content:center;
+        gap:8px;text-decoration:none;box-sizing:border-box;">
+        ✈️ الخطوة 2: افتح البوت والصق الطلب
+      </a>
+      <p style="color:#9a9a9a;font-size:11px;margin-top:10px;text-align:center;">
+        بعد فتح البوت، الصق الطلب واضغط إرسال ✅
+      </p>
+    </div>
+  `;
+  statusMsg.className = "webhook-status";
 
-    // fallback للويب بعد ثانية لو التطبيق ما فتحش
-    setTimeout(() => {
-      window.open(webUrl, '_blank');
-    }, 1000);
+  // زر النسخ
+  document.getElementById("copyOrderBtn").addEventListener("click", () => {
+    navigator.clipboard.writeText(window._pendingOrderMsg).then(() => {
+      document.getElementById("copyOrderBtn").textContent = "✅ تم النسخ!";
+      document.getElementById("copyOrderBtn").style.background = "#4ade80";
+      document.getElementById("copyOrderBtn").style.color = "#000";
+    }).catch(() => {
+      // fallback لو clipboard ما اشتغلتش
+      const ta = document.createElement("textarea");
+      ta.value = window._pendingOrderMsg;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      document.getElementById("copyOrderBtn").textContent = "✅ تم النسخ!";
+      document.getElementById("copyOrderBtn").style.background = "#4ade80";
+      document.getElementById("copyOrderBtn").style.color = "#000";
+    });
+  });
 
-  } else {
-    // لو مفيش chat_id - نفتح البوت مباشرة
-    const encodedMsg = encodeURIComponent(msg);
-    window.open(`https://t.me/telosaa_bot?text=${encodedMsg}`, '_blank');
-  }
-
-  statusMsg.textContent = "✅ جاري فتح تيليجرام، اضغط إرسال لتأكيد طلبك";
-  statusMsg.className = "webhook-status success";
+  // تفريغ السلة بعد تجهيز الطلب
+  cart = [];
+  itemQty = {};
+  document.querySelectorAll(".card").forEach(card => updateCardUI(card.dataset.key));
+  updateCartUI();
+  $("#custName").value = "";
+  $("#custPhone").value = "";
+  $("#custAddress").value = "";
 });
 
 function showToast(msg) {
