@@ -1,11 +1,9 @@
 /* ============================================================
-   TELOSAA MENU - Final Integration with Telegram
+   TELOSAA MENU - Webhook Integration (Secure)
    ============================================================ */
 
-const BOT_TOKEN = "8998768907:AAGMBnd2R9SbAtZDt5HmyIAEdNNORLhBqL4";
-// قراءة الـ Chat ID من الرابط إذا كان موجوداً، وإلا استخدام رقمك كافتراضي
-const urlParams = new URLSearchParams(window.location.search);
-const CHAT_ID = urlParams.get('chat_id') || "861741866";
+// ضع هنا رابط الـ Webhook الخاص بـ n8n بعد إنشائه
+const N8N_WEBHOOK_URL = "YOUR_N8N_WEBHOOK_URL_HERE";
 
 const MENU = [
   {
@@ -301,6 +299,7 @@ let itemQty = {};
 
 const $ = (sel) => document.querySelector(sel);
 const formatPrice = (p) => `${p} ج.م`;
+window.getCartTotalPrice = () => cart.reduce((s, i) => s + i.qty * i.price, 0);
 
 function parseKey(key) {
   const lastDashIndex = key.lastIndexOf('-');
@@ -440,7 +439,9 @@ function updateCartUI() {
     `).join("");
   }
   $("#cartTotal").textContent = formatPrice(getCartTotalPrice());
-  $("#modalTotal").textContent = formatPrice(getCartTotalPrice());
+  const selectedMethod = document.querySelector('input[name="deliveryMethod"]:checked')?.value || "delivery";
+  const displayFee = selectedMethod === "delivery" ? 50 : 0;
+  $("#modalTotal").textContent = formatPrice(getCartTotalPrice() + displayFee);
 }
 
 function bumpCartBadge() {
@@ -486,58 +487,61 @@ $("#sendTelegramBtn").addEventListener("click", async () => {
   const name = $("#custName").value.trim();
   const phone = $("#custPhone").value.trim();
   const address = $("#custAddress").value.trim();
+  const deliveryMethod = document.querySelector('input[name="deliveryMethod"]:checked')?.value || "delivery";
   const statusMsg = $("#webhookStatus");
   const btn = $("#sendTelegramBtn");
 
-  if (!name || !phone || !address) {
-    showToast("برجاء إكمال جميع البيانات أولاً ⚠️");
+  if (!name || !phone) {
+    showToast("برجاء إكمال الاسم ورقم الموبايل أولاً ⚠️");
+    return;
+  }
+  if (deliveryMethod === "delivery" && !address) {
+    showToast("برجاء إدخال عنوان التوصيل ⚠️");
     return;
   }
 
+  const deliveryFee = deliveryMethod === "delivery" ? 50 : 0;
+  const itemsSubtotal = getCartTotalPrice();
+  const finalTotal = itemsSubtotal + deliveryFee;
+
   btn.disabled = true;
-  statusMsg.textContent = "جاري إرسال الطلب إلى البوت...";
+  statusMsg.textContent = "جاري إرسال الطلب...";
   statusMsg.className = "webhook-status";
 
-  let msg = `🍕 *طلب جديد من Telosaa* 🍕\n`;
-  msg += `------------------------------\n`;
-  msg += `👤 *الاسم:* ${name}\n`;
-  msg += `📱 *الموبايل:* ${phone}\n`;
-  msg += `📍 *العنوان:* ${address}\n`;
-  msg += `------------------------------\n`;
-  msg += `*🛒 الأصناف:*\n\n`;
+  // بناء ملخص الأصناف
+  const itemsSummary = cart.map((item, i) =>
+    `${i + 1}. ${item.name} × ${item.qty} = ${item.qty * item.price} ج`
+  ).join(" | ");
 
-  cart.forEach((item, index) => {
-    msg += `${index + 1}. *${item.name}*\n`;
-    msg += `   الكمية: ${item.qty} | المجموع: ${item.qty * item.price} ج\n`;
-  });
-
-  msg += `------------------------------\n`;
-  msg += `*💵 الإجمالي المطلوب: ${getCartTotalPrice()} ج*\n`;
-  msg += `------------------------------\n`;
-
-  const telegramUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+  // البيانات المرسلة للـ Webhook
+  const orderData = {
+    customer_name: name,
+    phone_number: phone,
+    delivery_method: deliveryMethod === "delivery" ? "توصيل" : "استلام من الفرع",
+    delivery_address: deliveryMethod === "delivery" ? address : "—",
+    order_items_summary: itemsSummary,
+    items_subtotal_egp: itemsSubtotal,
+    delivery_fee_egp: deliveryFee,
+    final_total_egp: finalTotal,
+    customer_confirmed: "yes",
+    order_status: "new"
+  };
 
   try {
-    const formData = new URLSearchParams();
-    formData.append("chat_id", CHAT_ID);
-    formData.append("text", msg);
-    formData.append("parse_mode", "Markdown");
-
-    const res = await fetch(telegramUrl, {
+    const res = await fetch(N8N_WEBHOOK_URL, {
       method: "POST",
-      body: formData
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(orderData)
     });
 
-    const data = await res.json();
-
-    if (!res.ok || !data.ok) {
-      throw new Error(data.description || "حدث خطأ أثناء الإرسال");
+    if (!res.ok) {
+      throw new Error(`فشل الإرسال (${res.status})`);
     }
 
-    statusMsg.textContent = "✅ تم إرسال طلبك إلى البوت بنجاح!";
+    statusMsg.textContent = "✅ تم إرسال طلبك بنجاح! سيتواصل معك البوت قريباً.";
     statusMsg.classList.add("success");
 
-    cart = []; 
+    cart = [];
     itemQty = {};
     document.querySelectorAll(".card").forEach(card => updateCardUI(card.dataset.key));
     updateCartUI();
@@ -548,10 +552,10 @@ $("#sendTelegramBtn").addEventListener("click", async () => {
     setTimeout(() => {
       $("#checkoutModal").classList.remove("open");
       statusMsg.textContent = "";
-    }, 3000);
+    }, 3500);
 
   } catch (err) {
-    statusMsg.textContent = "❌ " + err.message;
+    statusMsg.textContent = "❌ " + (err.message || "حدث خطأ، حاول مرة أخرى");
     statusMsg.classList.add("error");
   } finally {
     btn.disabled = false;
