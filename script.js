@@ -3,7 +3,9 @@
    ============================================================ */
 
 const BOT_TOKEN = "8998768907:AAGMBnd2R9SbAtZDt5HmyIAEdNNORLhBqL4";
-const CHAT_ID = "861741866";
+// قراءة الـ Chat ID من الرابط إذا كان موجوداً، وإلا استخدام رقمك كافتراضي
+const urlParams = new URLSearchParams(window.location.search);
+const CHAT_ID = urlParams.get('chat_id') || "861741866";
 
 const MENU = [
   {
