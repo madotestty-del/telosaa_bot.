@@ -76,8 +76,22 @@
         </div>
         
         <div class="input-group">
+          <label>طريقة الاستلام</label>
+          <div style="display:flex;gap:16px;margin-top:6px;">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:400;">
+              <input type="radio" name="deliveryMethod" value="delivery" checked onchange="toggleAddress(this.value)">
+              🚚 توصيل (+50 ج.م)
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:400;">
+              <input type="radio" name="deliveryMethod" value="pickup" onchange="toggleAddress(this.value)">
+              🏪 استلام من الفرع (مجاناً)
+            </label>
+          </div>
+        </div>
+
+        <div class="input-group" id="addressGroup">
           <label>العنوان</label>
-          <input type="text" id="custAddress" placeholder="المنطقة، الشارع، رقم العمارة" required>
+          <input type="text" id="custAddress" placeholder="المنطقة، الشارع، رقم العمارة">
         </div>
       </div>
 
@@ -95,6 +109,18 @@
   </div>
 
   <div class="toast" id="toast"></div>
+  <script>
+    function toggleAddress(method) {
+      const group = document.getElementById('addressGroup');
+      const totalEl = document.getElementById('modalTotal');
+      group.style.display = method === 'delivery' ? 'block' : 'none';
+      // تحديث إجمالي الطلب لإظهار رسوم التوصيل
+      if (window.getCartTotalPrice) {
+        const fee = method === 'delivery' ? 50 : 0;
+        totalEl.textContent = (window.getCartTotalPrice() + fee) + ' ج.م';
+      }
+    }
+  </script>
   <script src="script.js"></script>
 </body>
 </html>
